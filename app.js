@@ -75,11 +75,65 @@ app.get('/', (request, response) => {
     <li><a href="/bake?baked_good=loaves+of+bread&count=5">Bake 5 loaves of bread</a> — notice how we represent spaces in the URL.</li>
     <li><a href="/bake?baked_good=cupcakes&count=1138">Bake 1138 cupcakes</a></li>
     </ul>
+
+    <h2>My Pages</h2>
+    <ul>
+    <li><a href = "/clock">clock</a></li>
+    <li><a href = "/greet/custom?type=Jerry">name</a></li>
+    <li><a href = "/greet">name2.0</a></li>
+    </ul>
   `;
 
   let pageHtml = getLayoutHTML(content);
 
   response.send(pageHtml);
+});
+
+app.get('/greet', (request, response) => {
+  let name = request.query.user_name;
+
+  let content = `
+    <h1>Welcome to the Greetings Page!</h1>
+    <p>
+      <a href='/'>Back to the homepage</a>
+    </p>
+
+    <form method="GET" action="/greet">
+      <span class="form-section">
+        <label for="user_name">Your name is:</label>
+        <input type="text" name="user_name" id="user_name" required>
+      </span>
+      <span class="form-section">
+        <input type="submit" value="Submit">
+      </span>
+    </form>
+    <h2>WOW! So, you name is ${name}!?</h2>
+    `;
+
+  response.send(getLayoutHTML(content));
+});
+
+app.get('/greet/custom', (request, response) => {
+  let nameType = capitalize(request.query.type);
+
+  let content = `
+    <h1>Hello ${nameType}!</h1>
+    <p>Have a nice day!!</p>
+    <p>If your name is not ${nameType} please change the value of the <code>type</code> parameter in the URL!</p>
+    <p><a href="/">Back to the homepage</a></p>
+  `;
+
+  response.send(getLayoutHTML(content));
+});
+
+app.get('/clock', (request, response) => {
+  let dt = new Date();
+  let time = dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds();
+  let content = `
+    <h1>Th time is: ${time}</h1>
+  `;
+
+  response.send(getLayoutHTML(content));
 });
 
 app.get('/waffles', (request, response) => {
@@ -149,7 +203,7 @@ app.get('/bake', (request, response) => {
 
   content += '<ul>';
 
-  for(let i = 1; i <= count; i++) {
+  for (let i = 1; i <= count; i++) {
     content += `<li>${bakedGood} number ${i}</li>`;
   }
 
